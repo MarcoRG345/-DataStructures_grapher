@@ -1,0 +1,140 @@
+package mx.unam.ciencias.edd.proyecto2;
+import mx.unam.ciencias.edd.ArbolAVL;
+import mx.unam.ciencias.edd.ArbolBinario;
+import mx.unam.ciencias.edd.ArbolBinarioCompleto;
+import mx.unam.ciencias.edd.ArbolBinarioOrdenado;
+import mx.unam.ciencias.edd.ArbolRojinegro;
+import mx.unam.ciencias.edd.Lista;
+import mx.unam.ciencias.edd.VerticeArbolBinario;
+import mx.unam.ciencias.edd.Color;  
+import mx.unam.ciencias.edd.Cola;
+import mx.unam.ciencias.edd.MeteSaca;
+import mx.unam.ciencias.edd.Grafica;
+import mx.unam.ciencias.edd.Pila;
+import mx.unam.ciencias.edd.VerticeGrafica;
+
+/**
+ * Clase para dibujar una gráfica en formato SVG.
+ */
+public class DibujaGrafica extends Contenido {
+
+    /**
+     * Clase interna para dibujar los vértices de la gráfica.
+     */
+    private class DibujaVerticeGrafica extends EsqueletoVertice {
+
+        private VerticeGrafica<Integer> vertice;
+
+        /**
+         * Constructor. Crea un nuevo vértice de la gráfica.
+         * @param vertice el vértice de la gráfica.
+         */
+        public DibujaVerticeGrafica(VerticeGrafica<Integer> vertice) {
+            this.vertice = vertice;
+        }
+    }
+
+    private Grafica<Integer> grafica;
+    private Lista<DibujaVerticeGrafica> lista;
+
+    /**
+     * Constructor. Inicializa la gráfica y la lista de vértices.
+     */
+    public DibujaGrafica() {
+        grafica = new Grafica<>();
+        lista = new Lista<>();
+    }
+
+    /**
+     * Almacena dos enteros y los conecta en la gráfica.
+     * @param entero_1 el primer entero a almacenar y conectar.
+     * @param entero_2 el segundo entero a almacenar y conectar.
+     */
+    public void almacena(int entero_1, int entero_2) {
+        if (entero_1 == entero_2 && !grafica.contiene(entero_1)) {
+            grafica.agrega(entero_1);
+        } else if (grafica.contiene(entero_1) && !grafica.contiene(entero_2)) {
+            grafica.agrega(entero_2);
+            grafica.conecta(entero_1, entero_2);
+        } else if (!grafica.contiene(entero_1) && grafica.contiene(entero_2)) {
+            grafica.agrega(entero_1);
+            grafica.conecta(entero_1, entero_2);
+        } else if (!grafica.contiene(entero_1) && !grafica.contiene(entero_2)) {
+            grafica.agrega(entero_1);
+            grafica.agrega(entero_2);
+            grafica.conecta(entero_1, entero_2);
+        }
+    }
+
+    /**
+     * Dibuja la gráfica en formato SVG.
+     * @return la representación SVG de la gráfica.
+     */
+    public String dibuja() {
+        String cadena = "";
+        grafica.paraCadaVertice((v) -> lista.agrega(new DibujaVerticeGrafica(v)));
+        for (DibujaVerticeGrafica dibujarVertice : lista) {
+            obtenCoordenadas(dibujarVertice);
+        }
+        Lista<DibujaVerticeGrafica> copia = lista.copia();
+        for (DibujaVerticeGrafica dibuja_v : copia) {
+            copia.elimina(dibuja_v);
+            for (DibujaVerticeGrafica dibuja_u : copia) {
+                if (grafica.sonVecinos(dibuja_v.vertice.get(), dibuja_u.vertice.get())) {
+                    cadena += lineas(dibuja_v.getCentro_x(), dibuja_u.getCentro_x(), dibuja_v.getCentro_y(), dibuja_u.getCentro_y());
+                }
+            }
+        }
+        for (DibujaVerticeGrafica dibuja_v : lista) {
+            cadena += dibuja_v.dibujaVertice(dibuja_v.getCentro_x(), dibuja_v.getCentro_y(), 3, "white", "black");
+            cadena += dibuja_v.insertaElemento(dibuja_v.vertice.get(), 3, dibuja_v.getCentro_x(), dibuja_v.getCentro_y(), "black");
+        }
+        return cadena;
+    }
+
+    /**
+     * Obtiene coordenadas aleatorias para un vértice.
+     * @param dibujandoVertice el vértice a ubicar.
+     */
+    public void obtenCoordenadas(DibujaVerticeGrafica dibujandoVertice) {
+        int coord_x = (int) (Math.random() * getDimensiones()) + 3;
+        int coord_y = (int) (Math.random() * getDimensiones()) + 3;
+        dibujandoVertice.setCentro_x(coord_x);
+        dibujandoVertice.setCentro_y(coord_y);
+    }
+
+    /**
+     * Devuelve el formato SVG de la gráfica.
+     * @return el formato SVG de la gráfica.
+     */
+    @Override public String formatoSVG() {
+        setDimensiones(grafica.getElementos() * 10);
+        String contenido = dibuja();
+        String cadena = "<svg width= \"" + (getDimensiones()) + "\" height= \"" + (getDimensiones() + 10) + "\"" + ">\n";
+        cadena += contenido;
+        cadena += "</svg>";
+        return cadena;
+    }
+
+    /**
+     * Método no implementado.
+     * @param entero no se utiliza en esta clase.
+     */
+    @Override public void almacena(int entero) {
+        // No implementado
+    }
+
+    /**
+     * Dibuja una línea SVG entre dos puntos.
+     * @param origen_x la coordenada x del origen.
+     * @param destino_x la coordenada x del destino.
+     * @param origen_y la coordenada y del origen.
+     * @param destino_y la coordenada y del destino.
+     * @return la línea SVG entre los dos puntos.
+     */
+    private String lineas(int origen_x, int destino_x, int origen_y, int destino_y) {
+        String linea = " <line x1= \"" + origen_x + "\"" + " y1= \"" + origen_y + "\"";
+        linea += " x2= \"" + destino_x + "\" y2=\"" + destino_y + "\" stroke-width= \"0.3\" stroke= \"black\"/>\n";
+        return linea;
+    }
+}

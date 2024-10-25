@@ -1,0 +1,34 @@
+package mx.unam.ciencias.edd;
+
+public class DibujaMonticulo extends DibujaArbol{
+
+
+    private ArbolBinarioCompleto<Integer> arbol;
+    Lista<Integer> lista;
+    
+    public DibujaMonticulo(){
+	arbol = new ArbolBinarioCompleto<>();
+	lista = new Lista<>();
+    }
+
+    @Override public void almacena(int entero){
+        lista.agrega(entero);
+    }
+    @Override public String formatoSVG(){
+	setElementos(arbol.getElementos());
+	String a = "<svg width= \""+getAncho()+"\" height= \""+(getAlto() + 50)+"\""+">\n";
+	a += dibuja(arbol);
+	a += "</svg>";
+	return a;
+    }
+    @Override public String dibuja(ArbolBinario<Integer> arbol){
+	String cadena = "";
+	lista = Lista.mergeSort(lista);
+	int[] monticulo = new int[lista.getElementos()]; 
+	for (int entero : lista){
+	    arbol.agrega(entero);
+	}
+	cadena += super.dibuja(arbol);
+	return cadena;
+    }
+}
