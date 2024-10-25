@@ -15,9 +15,9 @@ Ensure have java 11 + version and maven, you can try:
  * `mvn install` then `java -jar target/Proyecto2.jar NameOfClass N > file.svg` or input form `cat file.txt | java -jar target/Proyecto2.jar > file.svg`
    where "N" are a set`s integers like " 1 23 4 12 10 8 ..."
 # Examples
-* List![list](examples/list-svg.png) <br>
-* Binary tree![Binary tree](examples/tree-svg.png)<br>
-* Red-black Binary tree![Red-black Binary tree](examples/tree-rn-svg.png)<br>
-* AVL Binary tree![AVL Binary tree](examples/tree-avl-svg.png)<br>
+* List<br>![list](examples/list-svg.png) <br>
+* Binary tree<br>![Binary tree](examples/tree-svg.png)<br>
+* Red-black Binary tree<br>![Red-black Binary tree](examples/tree-rn-svg.png)<br>
+* AVL Binary tree<br>![AVL Binary tree](examples/tree-avl-svg.png)
 
 
