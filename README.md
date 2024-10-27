@@ -1,4 +1,4 @@
-## Data Structures grapaher generator
+## Data Structures plotter generator
 # Description
 This software implementation can graph in SVG format the next data structures:
  * List: NameOfClass `Lista`
